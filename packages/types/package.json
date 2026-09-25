@@ -1,0 +1,16 @@
+{
+  "name": "@repo/types",
+  "version": "0.1.0",
+  "types": "src/index.d.ts",
+  "license": "AGPL-3.0",
+  "exports": {
+    ".": {
+      "import": "./src/index.d.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "gen:docs": "NODE_OPTIONS='--max-old-space-size=4096' typedoc",
+    "clean": "rm -rf node_modules docs && echo 'Cleanup complete!'"
+  }
+}

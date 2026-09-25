@@ -1,0 +1,47 @@
+{
+  "name": "@org/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{ts,md,json,js,yaml}\"",
+    "clean": "rm -rf node_modules dist docs && echo 'Cleanup complete!'",
+    "prepare": "husky",
+    "commit": "git-cz"
+  },
+  "dependencies": {
+    "@prometheus-io/client": "^0.16.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@commitlint/cz-commitlint": "^21.2.2",
+    "@commitlint/prompt-cli": "^21.2.2",
+    "@commitlint/types": "^21.2.0",
+    "commitizen": "^4.3.2",
+    "husky": "^9.1.7",
+    "tsx": "^4.23.12",
+    "typedoc": "^0.28.20",
+    "commitlint-plugin-tense": "^1.0.10",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "@nx/js": "23.2.0",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/constants": "workspace:*",
+    "@repo/zod": "workspace:*",
+    "@swc-node/register": "1.11.1",
+    "@swc/core": "1.15.8",
+    "@swc/helpers": "0.5.18",
+    "@types/node": "^24.0.0",
+    "nx": "23.2.0",
+    "prettier": "^3.8.1",
+    "tslib": "^2.3.0",
+    "typescript": "~6.0.3"
+  }
+}

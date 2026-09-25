@@ -1,0 +1,112 @@
+name: Nebula
+
+services:
+  server:
+    depends_on:
+      - "redis"
+      - "redis_insight"
+      - "postgres"
+      - "grafana_loki"
+    build:
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    container_name: nebula-server
+    env_file:
+      - ./apps/server/.env.production.local
+    ports:
+      - 3000:3000
+    networks:
+      - nebula
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/server/src
+          target: /app/src
+          ignore:
+            - ./apps/server/node_modules/
+            - node_modules/
+
+        - action: rebuild
+          path: ./apps/server/package.json
+        - action: rebuild
+          path: package.json
+
+        - action: restart
+          path: ./apps/server/.env
+
+  postgres:
+    image: postgres:latest
+    container_name: nebula-postgres
+    ports:
+      - 5432:5432
+    networks:
+      - nebula
+    volumes:
+      - nebula_pgData:/var/lib/postgresql/MAJOR/docker
+    environment:
+      - POSTGRES_PASSWORD=postgres
+  redis:
+    image: redis:latest
+    container_name: nebula-redis-server
+    ports:
+      - 6379:6379
+    networks:
+      - nebula
+    volumes:
+      - nebula_redis:/data
+  redis_insight:
+    depends_on:
+      - "redis"
+    image: redis/redisinsight:latest
+    container_name: nebula-redisinsight
+    volumes:
+      - nebula_redisinsight:/data
+    ports:
+      - 5540:5540
+    networks:
+      - nebula
+    environment:
+      - RI_REDIS_HOST_0=nebula-redis-server
+      - RI_REDIS_PORT_0=6379
+      - RI_REDIS_USERNAME_0=default
+      - RI_REDIS_PASSWORD_0=default
+  prometheus:
+    depends_on:
+      - "server"
+    image: prom/prometheus
+    container_name: prometheus-server
+    networks:
+      - nebula
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+  grafana:
+    depends_on:
+      - "prometheus"
+    image: grafana/grafana-oss
+    container_name: grafana
+    networks:
+      - nebula
+    ports:
+      - 3005:3000
+    volumes:
+      - grafana-oss-storage:/var/lib/grafana
+  grafana_loki:
+    image: grafana/loki
+    container_name: nebula-loki
+    networks:
+      - nebula
+    ports:
+      - 3100:3100
+
+networks:
+  nebula:
+    driver: bridge
+    name: nebula
+
+volumes:
+  nebula_pgData:
+  nebula_redis:
+  nebula_redisinsight:
+  grafana-oss-storage:

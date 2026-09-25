@@ -1,0 +1,42 @@
+{
+  "name": "@repo/emails",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "build:ui": "email build --dir src",
+    "dev:ui": "email dev --dir src -p 3001",
+    "export": "email export --dir src",
+    "clean": "rm -rf node_modules dist docs .react-email .turbo && echo 'Cleanup complete!'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@react-email/ui": "6.9.3",
+    "@types/react": "^19.2.18",
+    "eslint": "^10.9.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.11.0",
+    "typescript-eslint": "^8.68.0"
+  },
+  "dependencies": {
+    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.1.0",
+    "react": "^19.2.8",
+    "react-dom": "19.2.8",
+    "react-email": "6.9.3"
+  }
+}

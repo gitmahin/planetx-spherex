@@ -1,0 +1,17 @@
+{
+  "entryPoints": ["packages/*", "apps/*"],
+  "name": "Technical Reference",
+  "entryPointStrategy": "packages",
+  "out": "docs",
+  "includeVersion": false,
+  "exclude": [
+    "**/node_modules/**",
+    "**/docs/**",
+    "**/dist/**",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "externalPattern": ["**/node_modules/**", "apps/storybook"],
+  "excludeExternals": true,
+  "skipErrorChecking": true
+}

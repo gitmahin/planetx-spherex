@@ -1,0 +1,146 @@
+openapi: 3.1.0
+
+info:
+  title: Nebula - Auth & User Service API
+  summary: Authentication, account, and profile management API for the Nebula.
+  description: >-
+    Auth/User microservice for Nebula: signup/login
+    with JWT access+refresh cookies, Google OAuth, OTP-based email/phone verification
+    (Resend + Twilio), Redis-cached session data, and profile/contact/address CRUD.
+
+
+    NOTE ON INFERENCE: Several details below (exact error `code`/`title`/`message`
+    text, the full value sets for `role`, `provider`, `gender`, and social-link
+    `type` enums, and the production server URL) are not present in the reviewed
+    source and are marked "inferred" — confirm against the real `events`/`zod`
+    modules before treating them as a contract.
+  contact:
+    name: Mahin
+  license:
+    name: UNLICENSED
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:{port}/api/v1
+    description: Development server
+    variables:
+      port:
+        default: "3000"
+  - url: https://your-production-domain.example.com/api/v1
+    description: Production server (placeholder — inferred, confirm real deployment URL)
+
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      required: [status, message, data, success, title]
+      properties:
+        status: { type: integer }
+        message: { type: string }
+        data: { nullable: true }
+        success: { type: boolean }
+        title: { type: string }
+
+  responses:
+    ValidationError:
+      description: Request body/query failed Zod validation.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Validation Error"
+            message: "The information provided is incorrect or incomplete. Please check your inputs and try again."
+            code: "40001"
+            status: 400
+            success: false
+            errors: []
+
+    Unauthorized:
+      description: Missing/expired/invalid session, or bad credentials.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Unauthorized"
+            message: "Your session has expired or is invalid. Please log in again."
+            code: "40100"
+            status: 401
+            success: false
+            errors: []
+
+    NotFound:
+      description: Requested resource was not found.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Resource Not Found"
+            message: "The requested resource could not be found. Please check the identifier and try again."
+            code: "40400"
+            status: 404
+            success: false
+            errors: []
+
+    Conflict:
+      description: Resource already exists / already in the requested state.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Already Exists"
+            message: "A resource with these details already exists."
+            code: "40900"
+            status: 409
+            success: false
+            errors: []
+
+    ServiceUnavailable:
+      description: An upstream provider (e.g. Google) failed to respond as expected.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Service Unavailable"
+            message: "We couldn't complete that request with our provider. Please try again shortly."
+            code: "50300"
+            status: 503
+            success: false
+            errors: []
+
+    InternalServerError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            title: "Unexpected Error"
+            message: "Something went wrong on our end. Please try again later or contact support if the issue persists."
+            code: "50000"
+            status: 500
+            success: false
+            errors: []
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check endpoint (served at the app root, not under /api/v1)
+      tags: [System]
+      security: []
+      servers:
+        - url: http://localhost:{port}
+          variables: { port: { default: "3000" } }
+      responses:
+        "200":
+          description: Service healthy.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiResponse" }
+              example:
+                {
+                  status: 200,
+                  message: "OK",
+                  success: true,
+                  title: "",
+                  data: null,
+                }

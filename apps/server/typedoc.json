@@ -1,0 +1,19 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "includeVersion": true,
+  "out": "docs",
+  "name": "Server - Technical Reference",
+  "externalPattern": ["**/node_modules/**"],
+  "exclude": [
+    "**/node_modules/**",
+    "**/typedoc/**",
+    "**/dist/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/temp/**"
+  ],
+  "excludeExternals": true,
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "skipErrorChecking": true
+}
