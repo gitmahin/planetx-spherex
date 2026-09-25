@@ -62,3 +62,5 @@ docs
 *.tfstate
 
 .react-email
+
+.venv/
