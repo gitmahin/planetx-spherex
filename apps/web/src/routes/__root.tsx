@@ -1,9 +1,13 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 
-import appCss from "../styles.css?url";
+const queryClient = new QueryClient();
 
+import appCss from "@repo/ui/globals.css?url";
+import "react-loading-skeleton/dist/skeleton.css";
+import { SkeletonTheme } from "react-loading-skeleton";
+import { injectRuntimeEnv } from "@/ssr";
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -15,7 +19,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "PlanetX SphereX",
       },
     ],
     links: [
@@ -25,28 +29,29 @@ export const Route = createRootRoute({
       },
     ],
   }),
+  notFoundComponent: () => (
+    <main className="container mx-auto p-4 pt-16">
+      <h1>404</h1>
+      <p>The requested page could not be found.</p>
+    </main>
+  ),
   shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`dark`}>
       <head>
         <HeadContent />
+        {injectRuntimeEnv()}
       </head>
-      <body>
-        {children}
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+      <body className="dark overflow-x-hidden">
+        <QueryClientProvider client={queryClient}>
+          <Toaster richColors={true} position="top-center" />
+          <SkeletonTheme baseColor="#27272a" highlightColor="#3f3f46">
+            {children}
+          </SkeletonTheme>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>

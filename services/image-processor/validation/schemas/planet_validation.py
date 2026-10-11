@@ -1,7 +1,3 @@
-"""
-Add these nested classes inside your existing PlanetValidationSchema
-(next to CreatePlanetSchema). Assumes marshmallow.
-"""
 from marshmallow import Schema, fields, validate
 
 

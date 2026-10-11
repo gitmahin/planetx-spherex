@@ -1,13 +1,10 @@
-from repositories import PlanetRepository
-from validation.validators import  PlanetValidator
-
 import uuid
 from dataclasses import dataclass, field
 
 import numpy as np
 
-import spherex_client
-import detection
+from libs import spherex_client
+from libs import detection
 
 
 @dataclass
@@ -15,14 +12,15 @@ class TrackingSession:
     ra: float
     dec: float
     window_arcmin: float
-    epochs: list                      
+    epochs: list                       # [{"epoch", "mjd", "download_url"}]
     cursor: int = 0
     path: list = field(default_factory=list)
     prev_xy: np.ndarray | None = None
 
 
 class PlanetService:
-    def __init__(self):
+    def __init__(self, repository):
+        self.repository = repository
         self.sessions: dict[str, TrackingSession] = {} 
 
     def start_tracking(self, ra: float, dec: float, window_arcmin: float = 10.0, band: str = "D1"):
@@ -62,6 +60,7 @@ class PlanetService:
             "image_base64": detection.image_to_png_base64(image),
             "width": image.shape[1],
             "height": image.shape[0],
+            "wcs": detection.png_wcs_dict(wcs, image.shape[1], image.shape[0]),
             "detected": detected,
             "path": s.path,
             "has_more": s.cursor < len(s.epochs),
@@ -72,7 +71,7 @@ class PlanetService:
 
     def compare_epochs(self, session_id: str, index_a: int, index_b: int):
         s = self._get(session_id)
-        img_a, _, xy_a, label_a = self._render(s, index_a)
+        img_a, wcs_a, xy_a, label_a = self._render(s, index_a)
         img_b, wcs_b, xy_b, label_b = self._render(s, index_b)
 
         changed = []
@@ -88,13 +87,14 @@ class PlanetService:
 
         return {
             "epoch_a": {"label": label_a, "image_base64": detection.image_to_png_base64(img_a),
-                        "width": img_a.shape[1], "height": img_a.shape[0]},
+                        "width": img_a.shape[1], "height": img_a.shape[0],
+                        "wcs": detection.png_wcs_dict(wcs_a, img_a.shape[1], img_a.shape[0])},
             "epoch_b": {"label": label_b, "image_base64": detection.image_to_png_base64(img_b),
-                        "width": img_b.shape[1], "height": img_b.shape[0]},
+                        "width": img_b.shape[1], "height": img_b.shape[0],
+                        "wcs": detection.png_wcs_dict(wcs_b, img_b.shape[1], img_b.shape[0])},
             "changed_points": changed,
         }
 
-    # helpers
     def _get(self, session_id: str) -> TrackingSession:
         s = self.sessions.get(session_id)
         if s is None:
