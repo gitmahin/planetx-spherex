@@ -1,39 +1,6 @@
 name: Nebula
 
 services:
-  server:
-    depends_on:
-      - "redis"
-      - "redis_insight"
-      - "postgres"
-      - "grafana_loki"
-    build:
-      context: .
-      dockerfile: ./apps/server/Dockerfile
-    container_name: nebula-server
-    env_file:
-      - ./apps/server/.env.production.local
-    ports:
-      - 3000:3000
-    networks:
-      - nebula
-    develop:
-      watch:
-        - action: sync
-          path: ./apps/server/src
-          target: /app/src
-          ignore:
-            - ./apps/server/node_modules/
-            - node_modules/
-
-        - action: rebuild
-          path: ./apps/server/package.json
-        - action: rebuild
-          path: package.json
-
-        - action: restart
-          path: ./apps/server/.env
-
   postgres:
     image: postgres:latest
     container_name: nebula-postgres

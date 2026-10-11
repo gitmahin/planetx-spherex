@@ -4,10 +4,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "format": "prettier --write \"**/*.{ts,md,json,js,yaml}\"",
-    "clean": "rm -rf node_modules dist docs && echo 'Cleanup complete!'",
-    "prepare": "husky",
-    "commit": "git-cz"
+    "build": "turbo run build",
+    "dev": "turbo run dev --concurrency=30",
+    "check:lint": "turbo run check:lint",
+    "fix:lint": "turbo run fix:lint",
+    "check:types": "turbo run check:types",
+    "format": "prettier --write \"**/*.{ts,tsx,json,css}\"",
+    "gen:docs": "turbo run gen:docs",
+    "gen:docs-all": "NODE_OPTIONS='--max-old-space-size=4096' typedoc",
+    "clean": "turbo run clean && rm -rf node_modules dist docs .turbo && echo 'Root Cleanup complete!'",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "commit": "git-cz",
+    "prepare": "husky"
   },
   "dependencies": {
     "@prometheus-io/client": "^0.16.1"
@@ -17,13 +26,16 @@
       "path": "@commitlint/cz-commitlint"
     }
   },
+  "packageManager": "pnpm@10.33.4",
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.2.2",
     "@commitlint/config-conventional": "^21.2.2",
     "@commitlint/cz-commitlint": "^21.2.2",
     "@commitlint/prompt-cli": "^21.2.2",
     "@commitlint/types": "^21.2.0",
-    "@nx/js": "23.2.0",
     "@repo/constants": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
@@ -37,8 +49,8 @@
     "commitlint-plugin-tense": "^1.0.10",
     "conventional-changelog-conventionalcommits": "^10.4.0",
     "husky": "^9.1.7",
-    "nx": "23.2.0",
     "prettier": "^3.8.1",
+    "turbo": "^2.10.13",
     "tsdown": "^0.22.14",
     "tslib": "^2.3.0",
     "tsx": "^4.23.12",

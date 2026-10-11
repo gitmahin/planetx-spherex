@@ -16,10 +16,3 @@ app.include_router(ApiRouter, prefix="/api")
 @app.get("/health")
 def health_route():
     return ApiResponse(200, "Ok")
-
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    if item_id == 3:
-        raise ApiError(418, "Nope! I don't like 3.")
-    return {"item_id": item_id}

@@ -1,0 +1,6 @@
+{
+  "extends": ["../../typedoc.base.jsonc"],
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "skipErrorChecking": true
+}
